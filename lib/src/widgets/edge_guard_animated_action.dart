@@ -51,17 +51,19 @@ class EdgeGuardAnimatedAction extends StatelessWidget {
 
     double bottomPadding;
 
+    final paddingOf = MediaQuery.paddingOf(context);
+    final viewPaddingOf = MediaQuery.viewPaddingOf(context);
+    final sysGesturesOf = MediaQuery.systemGestureInsetsOf(context);
+    final viewInsetsOf = MediaQuery.viewInsetsOf(context);
+
     if (scope != null && scope.config.protectBottomActions) {
-      final insets = scope.insetsInfo;
       final sysNavBottom = math.max(
-        insets.navigationBars.bottom,
-        insets.systemGestures.bottom,
+        math.max(paddingOf.bottom, viewPaddingOf.bottom),
+        sysGesturesOf.bottom,
       );
-      final imeBottom = insets.ime.bottom;
+      final imeBottom = viewInsetsOf.bottom;
       bottomPadding = math.max(sysNavBottom, imeBottom);
     } else {
-      final paddingOf = MediaQuery.paddingOf(context);
-      final viewInsetsOf = MediaQuery.viewInsetsOf(context);
       bottomPadding = math.max(paddingOf.bottom, viewInsetsOf.bottom);
     }
 

@@ -30,27 +30,24 @@ class EdgeGuardBottomAction extends StatelessWidget {
     // However, it's safer to use MediaQuery if scope is null.
     var bottomPadding = 0.0;
 
+    final paddingOf = MediaQuery.paddingOf(context);
+    final viewPaddingOf = MediaQuery.viewPaddingOf(context);
+    final sysGesturesOf = MediaQuery.systemGestureInsetsOf(context);
+    final viewInsetsOf = MediaQuery.viewInsetsOf(context);
+
     if (scope != null && scope.config.protectBottomActions) {
-      final insets = scope.insetsInfo;
-
-      // Algorithm: We need to clear the gesture area and navigation bar.
-      // If the keyboard is up, it consumes the navigation bar area, so IME
-      // is the primary inset.
-      // If we are just avoiding gestures, we take the max of padding.bottom and gesture.bottom.
-
+      // Use local MediaQuery values to ensure we respect padding that has
+      // already been consumed by ancestors like Scaffold or SafeArea.
       final sysNavBottom = math.max(
-        insets.navigationBars.bottom,
-        insets.systemGestures.bottom,
+        math.max(paddingOf.bottom, viewPaddingOf.bottom),
+        sysGesturesOf.bottom,
       );
-      final imeBottom = insets.ime.bottom;
-
+      final imeBottom = viewInsetsOf.bottom;
+      
       // The effective bottom is the maximum of the system nav area and the IME area.
-      // viewPadding is already included in sysNavBottom typically, but to be robust:
       bottomPadding = math.max(sysNavBottom, imeBottom);
     } else if (scope == null) {
       // Fallback if no scope is found
-      final paddingOf = MediaQuery.paddingOf(context);
-      final viewInsetsOf = MediaQuery.viewInsetsOf(context);
       bottomPadding = math.max(paddingOf.bottom, viewInsetsOf.bottom);
     }
 

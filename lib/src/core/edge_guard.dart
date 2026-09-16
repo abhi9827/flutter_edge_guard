@@ -160,9 +160,9 @@ class EdgeGuard extends StatelessWidget {
     // it might be gesture. If it's larger (~48), it might be 3-button.
     var navMode = EdgeGuardNavigationMode.unknown;
     if (isAndroid) {
-      if (padding.bottom > 0 && padding.bottom < 30) {
+      if (effectiveBottom > 0 && effectiveBottom < 30) {
         navMode = EdgeGuardNavigationMode.gesture;
-      } else if (padding.bottom >= 30) {
+      } else if (effectiveBottom >= 30) {
         navMode = EdgeGuardNavigationMode.threeButton;
       }
     }

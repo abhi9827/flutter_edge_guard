@@ -40,15 +40,10 @@ class EdgeGuardSafeArea extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Prefer scope-aware insets; fall back to MediaQuery if no EdgeGuard found.
-    final scope = EdgeGuardScope.maybeOf(context);
-    final EdgeInsets currentPadding;
-
-    if (scope != null) {
-      currentPadding = scope.insetsInfo.padding;
-    } else {
-      // Graceful fallback: behave like a standard SafeArea when no scope.
-      currentPadding = MediaQuery.paddingOf(context);
-    }
+    // Ignore scope.insetsInfo.padding to prevent double-padding when nested.
+    // The local MediaQuery correctly reflects what has already been consumed
+    // by ancestor SafeAreas or Scaffolds.
+    final currentPadding = MediaQuery.paddingOf(context);
 
     // Calculate required padding avoiding double-padding issues common with
     // nested SafeAreas. We use max() against minimum to ensure the minimum

@@ -7,6 +7,7 @@ import 'detectors/cutout_detector.dart';
 import 'detectors/desktop_detector.dart';
 import 'detectors/fullscreen_detector.dart';
 import 'detectors/inset_detector.dart';
+import 'detectors/ios_detector.dart';
 import 'detectors/keyboard_detector.dart';
 import 'detectors/large_screen_detector.dart';
 import 'detectors/navigation_detector.dart';
@@ -69,10 +70,7 @@ class EdgeGuardDiagnostics {
     issues.addAll(DesktopDetector.detect(insetsInfo, platformInfo));
 
     if (platformInfo.isIOS) {
-      // IosDetector needs a BuildContext to access MediaQuery features
-      // not yet in the scope model.
-      // Note: this is a structural limitation — IosDetector should be
-      // refactored to operate purely on EdgeInsetsInfo in a future version.
+      issues.addAll(IosDetector.detect(insetsInfo));
     }
 
     return EdgeGuardReport(

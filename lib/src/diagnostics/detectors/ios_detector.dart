@@ -9,7 +9,6 @@ import '../../models/edge_insets_info.dart';
 /// Detects common iOS-specific edge-to-edge issues.
 class IosDetector {
   static List<EdgeGuardIssue> detect(
-    BuildContext context,
     EdgeInsetsInfo info,
   ) {
     final issues = <EdgeGuardIssue>[];
@@ -26,7 +25,7 @@ class IosDetector {
           problem: 'Content may overlap the iOS home indicator.',
           evidence: 'bottom padding > 0',
           recommendation:
-              'Ensure bottom content is padded by at least MediaQuery.paddingOf(context).bottom.',
+              'Ensure bottom content is padded by at least the system bottom padding.',
         ),
       );
     }
@@ -43,7 +42,7 @@ class IosDetector {
           problem: 'Content may overlap the iOS notch or Dynamic Island.',
           evidence: 'top padding > 20',
           recommendation:
-              'Use EdgeGuard top protection or ensure top content is padded by MediaQuery.paddingOf(context).top.',
+              'Use EdgeGuard top protection or ensure top content is padded by the system top padding.',
         ),
       );
     }
