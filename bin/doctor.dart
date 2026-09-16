@@ -12,7 +12,7 @@ void main(List<String> args) {
     exit(1);
   }
 
-  bool outputJson = false;
+  var outputJson = false;
   String? failOnSeverity;
 
   for (final arg in args) {
@@ -27,7 +27,7 @@ void main(List<String> args) {
   final issues = analyzer.analyze(outputJson: outputJson);
 
   if (failOnSeverity != null) {
-    bool shouldFail = false;
+    var shouldFail = false;
     for (final issue in issues) {
       if (failOnSeverity == 'critical' && issue.severity == 'critical') {
         shouldFail = true;

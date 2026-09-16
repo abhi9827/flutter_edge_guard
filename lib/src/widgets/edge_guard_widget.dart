@@ -1,8 +1,13 @@
 import 'package:flutter/widgets.dart';
 import '../../flutter_edge_guard.dart';
 
-/// A smart replacement for [SafeArea] that avoids double padding and
-/// handles modern Android edge-to-edge requirements.
+/// A smart, edge-aware replacement for [SafeArea] that avoids double padding
+/// and handles modern Android edge-to-edge requirements.
+///
+/// Unlike plain [SafeArea], this widget reads insets from the [EdgeGuardScope]
+/// when available, giving it awareness of the full inset model. It gracefully
+/// falls back to [MediaQuery] if no [EdgeGuardScope] is found, so it is safe
+/// to use even without an [EdgeGuard] ancestor.
 class EdgeGuardSafeArea extends StatelessWidget {
   /// Whether to protect the top edge (e.g. status bar).
   final bool top;
@@ -34,26 +39,38 @@ class EdgeGuardSafeArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final info = EdgeGuardScope.of(context).insetsInfo;
-    final currentPadding = info.padding;
+    // Prefer scope-aware insets; fall back to MediaQuery if no EdgeGuard found.
+    final scope = EdgeGuardScope.maybeOf(context);
+    final EdgeInsets currentPadding;
 
-    // Calculate required padding avoiding double-padding issues common with nested SafeAreas.
-    // MediaQuery will consume padding if we use SafeArea, but EdgeGuard reads it and
-    // we can explicitly consume it if we want to mirror SafeArea behavior.
-    // For MVP, we will use Flutter's native SafeArea under the hood but with smart defaults,
-    // or calculate explicit Padding. Let's calculate explicit padding to have full control.
+    if (scope != null) {
+      currentPadding = scope.insetsInfo.padding;
+    } else {
+      // Graceful fallback: behave like a standard SafeArea when no scope.
+      currentPadding = MediaQuery.paddingOf(context);
+    }
 
-    var topPadding = top ? currentPadding.top : 0.0;
-    var bottomPadding = bottom ? currentPadding.bottom : 0.0;
-    var leftPadding = left ? currentPadding.left : 0.0;
-    var rightPadding = right ? currentPadding.right : 0.0;
-
-    topPadding = topPadding < minimum.top ? minimum.top : topPadding;
-    bottomPadding = bottomPadding < minimum.bottom
-        ? minimum.bottom
-        : bottomPadding;
-    leftPadding = leftPadding < minimum.left ? minimum.left : leftPadding;
-    rightPadding = rightPadding < minimum.right ? minimum.right : rightPadding;
+    // Calculate required padding avoiding double-padding issues common with
+    // nested SafeAreas. We use max() against minimum to ensure the minimum
+    // is always respected.
+    final topPadding = top
+        ? (currentPadding.top < minimum.top ? minimum.top : currentPadding.top)
+        : 0.0;
+    final bottomPadding = bottom
+        ? (currentPadding.bottom < minimum.bottom
+            ? minimum.bottom
+            : currentPadding.bottom)
+        : 0.0;
+    final leftPadding = left
+        ? (currentPadding.left < minimum.left
+            ? minimum.left
+            : currentPadding.left)
+        : 0.0;
+    final rightPadding = right
+        ? (currentPadding.right < minimum.right
+            ? minimum.right
+            : currentPadding.right)
+        : 0.0;
 
     // Create the padding widget.
     final Widget paddedChild = Padding(
@@ -66,7 +83,9 @@ class EdgeGuardSafeArea extends StatelessWidget {
       child: child,
     );
 
-    // Consume the padding we just applied so nested EdgeGuards/SafeAreas don't double-pad.
+    // Consume the padding we just applied so nested EdgeGuards/SafeAreas
+    // don't double-pad. We use MediaQuery.of() directly here so this widget
+    // works even without an EdgeGuardScope ancestor.
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(
         padding: currentPadding.copyWith(

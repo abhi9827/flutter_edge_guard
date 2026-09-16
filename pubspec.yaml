@@ -1,9 +1,9 @@
 name: flutter_edge_guard
 description: Understand and fix modern Android edge-to-edge UI problems. An edge-to-edge protection layer and diagnostics engine for Flutter.
 version: 0.1.0
-homepage: https://github.com/example/flutter_edge_guard
-repository: https://github.com/example/flutter_edge_guard
-issue_tracker: https://github.com/example/flutter_edge_guard/issues
+homepage: https://github.com/abhi9827/flutter_edge_guard
+repository: https://github.com/abhi9827/flutter_edge_guard
+issue_tracker: https://github.com/abhi9827/flutter_edge_guard/issues
 
 environment:
   sdk: '>=3.5.0 <4.0.0'
@@ -17,12 +17,6 @@ topics:
   - edge-to-edge
   - diagnostics
   - safearea
-
-screenshots:
-  - description: 'EdgeGuard Inspector'
-    path: screenshots/inspector.png
-  - description: 'EdgeGuard Debug Overlay'
-    path: screenshots/debug_overlay.png
 
 dependencies:
   flutter:

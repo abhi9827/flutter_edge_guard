@@ -16,6 +16,9 @@ class InsetDetector {
     // If we are on Android and padding is 0 but it's not a fullscreen app (handled elsewhere),
     // it might be a legacy app forced into edge-to-edge by Android 15+
     // or a non-edge-to-edge app.
+    // Edge-to-edge enforcement only applies to Android. On other platforms
+    // (iOS uses safe area, desktop has window chrome, web uses CSS),
+    // zero padding is normal and should not be flagged.
     if (platform.isAndroid && !insets.isEdgeToEdge) {
       issues.add(
         EdgeGuardIssue(

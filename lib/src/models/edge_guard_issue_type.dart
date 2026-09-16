@@ -18,6 +18,9 @@ enum EdgeGuardIssueType {
   /// System bar colors may lack sufficient contrast with content.
   systemBarContrast,
 
+  /// System bar readability may be compromised in edge-to-edge mode.
+  systemBarReadability,
+
   /// An issue with edge-to-edge configuration.
   edgeToEdgeConfiguration,
 
@@ -42,7 +45,7 @@ enum EdgeGuardIssueType {
   /// Usage of legacy predictive back patterns (e.g., WillPopScope).
   predictiveBack,
 
-  /// Padding applied redundantly (e.g., nested SafeAreas or manual + SafeArea).
+  /// Padding applied redundantly (e.g., nested SafeAreas or manual + SafeArea)
   doublePadding,
 
   /// Detectable hardcoded inset values.
@@ -50,6 +53,10 @@ enum EdgeGuardIssueType {
 
   /// A SafeArea nested within another SafeArea.
   nestedSafeArea,
+
+  /// Interactive elements placed too close to system gesture zones,
+  /// potentially conflicting with accessibility use patterns.
+  accessibilityTouchTarget,
 
   /// An unknown or uncategorized issue.
   unknown,

@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'dart:convert';
+import 'dart:io';
 
 class DoctorIssue {
   final String severity; // 'info', 'warning', 'critical'
@@ -15,11 +15,11 @@ class DoctorIssue {
   });
 
   Map<String, dynamic> toJson() => {
-    'severity': severity,
-    'message': message,
-    if (file != null) 'file': file,
-    if (recommendation != null) 'recommendation': recommendation,
-  };
+        'severity': severity,
+        'message': message,
+        if (file != null) 'file': file,
+        if (recommendation != null) 'recommendation': recommendation,
+      };
 }
 
 class ProjectAnalyzer {
@@ -68,8 +68,9 @@ class ProjectAnalyzer {
             : (issue.severity == 'warning' ? '⚠ [WARNING]' : 'ℹ [INFO]');
         stdout.writeln('$prefix ${issue.message}');
         if (issue.file != null) stdout.writeln('  File: ${issue.file}');
-        if (issue.recommendation != null)
+        if (issue.recommendation != null) {
           stdout.writeln('  Recommendation: ${issue.recommendation}');
+        }
       }
       stdout.writeln();
     }
@@ -96,6 +97,26 @@ class ProjectAnalyzer {
       stdout.writeln(
         'targetSdk: ${targetSdk ?? "UNAVAILABLE - could not parse"}',
       );
+    }
+
+    // Critical check: targetSdk below 35 means Android 15 E2E enforcement
+    // won't apply and the app may break silently on Android 15+ devices.
+    if (targetSdk != null) {
+      final sdkInt = int.tryParse(targetSdk);
+      if (sdkInt != null && sdkInt < 35) {
+        issues.add(
+          DoctorIssue(
+            severity: 'critical',
+            message:
+                'targetSdk ($targetSdk) is below 35. Android 15 enforces edge-to-edge '
+                'for all apps targeting API 35+. Apps with targetSdk < 35 may render '
+                'incorrectly on Android 15+ devices once Google Play enforces the requirement.',
+            recommendation:
+                'Update targetSdk to 36 (Android 16) and compileSdk to at least 35. '
+                'Test edge-to-edge behavior and use EdgeGuard to diagnose layout issues.',
+          ),
+        );
+      }
     }
   }
 
@@ -237,10 +258,22 @@ class ProjectAnalyzer {
     final libDir = Directory('${rootDir.path}/lib');
     if (!libDir.existsSync()) return;
 
+    // Paths to exclude from scanning — avoid false positives on the package's
+    // own source files and generated code.
+    final excludePatterns = [
+      '${rootDir.path}/lib/src/doctor/',
+      '${rootDir.path}/lib/src/models/edge_guard_issue_type',
+      '.g.dart',
+      '.freezed.dart',
+    ];
+
     var foundWillPopScope = false;
 
     for (final entity in libDir.listSync(recursive: true)) {
       if (entity is File && entity.path.endsWith('.dart')) {
+        // Skip excluded paths.
+        if (excludePatterns.any((p) => entity.path.contains(p))) continue;
+
         final content = entity.readAsStringSync();
         if (content.contains('WillPopScope')) {
           issues.add(

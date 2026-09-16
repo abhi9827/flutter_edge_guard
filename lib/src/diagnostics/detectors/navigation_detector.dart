@@ -1,10 +1,10 @@
 import '../../models/edge_guard_confidence.dart';
 import '../../models/edge_guard_issue.dart';
 import '../../models/edge_guard_issue_type.dart';
+import '../../models/edge_guard_navigation_mode.dart';
 import '../../models/edge_guard_platform_info.dart';
 import '../../models/edge_guard_severity.dart';
 import '../../models/edge_insets_info.dart';
-import '../../models/edge_guard_navigation_mode.dart';
 
 class NavigationDetector {
   static List<EdgeGuardIssue> detect(
@@ -12,6 +12,10 @@ class NavigationDetector {
     EdgeGuardPlatformInfo platform,
   ) {
     final issues = <EdgeGuardIssue>[];
+
+    // Navigation bar / gesture concepts only exist on mobile (Android, iOS).
+    // Desktop (Windows, macOS, Linux) and web have no swipeable navigation bars.
+    if (!platform.isAndroid && !platform.isIOS) return issues;
 
     if (insets.navigationBars.bottom > 0) {
       issues.add(
@@ -48,8 +52,8 @@ class NavigationDetector {
     if (platform.navigationMode != EdgeGuardNavigationMode.unknown) {
       final modeDesc =
           platform.navigationMode == EdgeGuardNavigationMode.gesture
-          ? 'Gesture Navigation'
-          : '3-Button Navigation';
+              ? 'Gesture Navigation'
+              : '3-Button Navigation';
       issues.add(
         EdgeGuardIssue(
           severity: EdgeGuardSeverity.info,

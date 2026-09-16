@@ -15,6 +15,7 @@ class EdgeGuardDebugOverlayWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      textDirection: TextDirection.ltr,
       children: [
         child,
         Positioned(

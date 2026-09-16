@@ -1,5 +1,6 @@
-import 'dart:io' show Platform;
+import 'dart:math' as math;
 import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -50,15 +51,24 @@ class EdgeGuard extends StatelessWidget {
     // Status Bars: Usually represented by the top padding.
     final statusBars = EdgeInsets.only(top: padding.top);
 
-    // Navigation Bars: Usually the bottom padding if viewInsets.bottom is 0.
+    // Navigation Bars: Use viewPadding for bottom since it preserves the nav
+    // bar inset even when the keyboard is open (unlike padding.bottom which
+    // collapses to 0 while the IME is visible).
     final navigationBars = EdgeInsets.only(
-      bottom: padding.bottom,
-      left: padding.left,
-      right: padding.right,
+      bottom: math.max(padding.bottom, viewPadding.bottom),
+      left: math.max(padding.left, viewPadding.left),
+      right: math.max(padding.right, viewPadding.right),
     );
 
-    // System Gestures: Provided explicitly by Flutter now.
-    final systemGestures = systemGestureInsets;
+    // System Gestures: Flutter provides these explicitly. Fall back to
+    // navigationBars if the value is zero (common in emulators and tests).
+    final rawSystemGestures = systemGestureInsets;
+    final systemGestures = (rawSystemGestures.left == 0 &&
+            rawSystemGestures.right == 0 &&
+            rawSystemGestures.bottom == 0 &&
+            rawSystemGestures.top == 0)
+        ? navigationBars
+        : rawSystemGestures;
 
     // Mandatory System Gestures: A subset of systemGestures.
     final mandatorySystemGestures = navigationBars;
@@ -81,7 +91,25 @@ class EdgeGuard extends StatelessWidget {
       }
     }
 
-    final isEdgeToEdge = padding.bottom > 0 || padding.top > 0;
+    // isEdgeToEdge: True when the app is drawing behind BOTH the status bar
+    // and navigation bar (the canonical edge-to-edge definition).
+    //
+    // Detection strategy (all three signals are checked for robustness):
+    //  • padding.top > 0           → app draws behind the status bar
+    //  • effectiveBottom > 0       → padding.bottom or viewPadding.bottom carries
+    //                                 the nav bar inset (3-button / 2-button nav)
+    //  • systemGestureInsets.bottom > 0 → gesture-navigation mode: Android
+    //                                     reports only a thin gesture strip here,
+    //                                     NOT in padding.bottom, so this is the
+    //                                     correct signal for gesture-nav edge-to-edge.
+    //
+    // Any of the bottom indicators being nonzero, combined with top > 0,
+    // means the OS is handing us the insets → edge-to-edge is active.
+    final effectiveBottom = math.max(padding.bottom, viewPadding.bottom);
+    final gestureNavBottom = systemGestureInsets.bottom;
+    final isEdgeToEdge =
+        padding.top > 0 && (effectiveBottom > 0 || gestureNavBottom > 0);
+
 
     final insetsInfo = EdgeInsetsInfo(
       statusBars: statusBars,
@@ -105,10 +133,15 @@ class EdgeGuard extends StatelessWidget {
 
     // 3. Determine Platform Info
     const isWeb = kIsWeb;
-    final isAndroid = !isWeb && Platform.isAndroid;
-    final isIOS = !isWeb && Platform.isIOS;
-    final isDesktop =
-        !isWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux);
+    // Use defaultTargetPlatform (works on all platforms including web).
+    // dart:io Platform is intentionally NOT used here so the package
+    // compiles and runs on web, Windows, Linux, and macOS.
+    final isAndroid = !isWeb && defaultTargetPlatform == TargetPlatform.android;
+    final isIOS = !isWeb && defaultTargetPlatform == TargetPlatform.iOS;
+    final isMacOS = !isWeb && defaultTargetPlatform == TargetPlatform.macOS;
+    final isWindows = !isWeb && defaultTargetPlatform == TargetPlatform.windows;
+    final isLinux = !isWeb && defaultTargetPlatform == TargetPlatform.linux;
+    final isDesktop = isMacOS || isWindows || isLinux;
 
     // Large screen / Foldable detection using stable displayFeatures / size heuristics.
     final isLargeScreen = size.width >= 600;
@@ -135,11 +168,14 @@ class EdgeGuard extends StatelessWidget {
     }
 
     final platformInfo = EdgeGuardPlatformInfo(
-      platform: isWeb ? 'web' : Platform.operatingSystem,
+      platform: isWeb ? 'web' : defaultTargetPlatform.name.toLowerCase(),
       isAndroid: isAndroid,
       isIOS: isIOS,
       isWeb: isWeb,
       isDesktop: isDesktop,
+      isMacOS: isMacOS,
+      isWindows: isWindows,
+      isLinux: isLinux,
       androidSdkInt:
           null, // We avoid native calls for this unless specifically requested via platform channel later, but keeping null avoids async build issues.
       targetSdk: null,

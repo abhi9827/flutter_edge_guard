@@ -121,4 +121,46 @@ class EdgeInsetsInfo {
       'right': insets.right,
     };
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is EdgeInsetsInfo &&
+        other.statusBars == statusBars &&
+        other.navigationBars == navigationBars &&
+        other.systemGestures == systemGestures &&
+        other.mandatorySystemGestures == mandatorySystemGestures &&
+        other.tappableElement == tappableElement &&
+        other.ime == ime &&
+        other.displayCutout == displayCutout &&
+        other.captionBar == captionBar &&
+        other.waterfall == waterfall &&
+        other.padding == padding &&
+        other.viewPadding == viewPadding &&
+        other.viewInsets == viewInsets &&
+        other.keyboardVisible == keyboardVisible &&
+        other.isEdgeToEdge == isEdgeToEdge &&
+        other.windowSize == windowSize &&
+        other.orientation == orientation;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        statusBars,
+        navigationBars,
+        systemGestures,
+        mandatorySystemGestures,
+        tappableElement,
+        ime,
+        displayCutout,
+        captionBar,
+        waterfall,
+        padding,
+        viewPadding,
+        viewInsets,
+        keyboardVisible,
+        isEdgeToEdge,
+        windowSize,
+        orientation,
+      );
 }

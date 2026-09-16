@@ -1,17 +1,26 @@
-# example
+# flutter_edge_guard example
 
-A new Flutter project.
+This example demonstration showcases all core features of the `flutter_edge_guard` package.
 
-## Getting Started
+## Included Demonstrations
 
-This project is a starting point for a Flutter application.
+1. **Bottom Action Demo (`EdgeGuardBottomAction`)**: Demonstrates safe padding for submit buttons against the 3-button or gesture navigation bar without causing duplicate padding.
+2. **Animated Action Demo (`EdgeGuardAnimatedAction`)**: Demonstrates smooth slide animations when the software keyboard (IME) opens and closes.
+3. **Keyboard Demo**: Shows text input and IME awareness with automatic keyboard inset handling.
+4. **Bottom Sheet Demo (`EdgeGuardBottomSheet`)**: Shows a modal bottom sheet that respects both navigation bar and keyboard insets.
+5. **Scrim Demo (`EdgeGuardScrim`)**: Shows status bar and navigation bar contrast scrims on colorful or image backgrounds.
+6. **Diagnostics Report Demo (`EdgeGuardDiagnostics`)**: Shows real-time issue detection and machine-readable JSON reports.
 
-A few resources to get you started if this is your first Flutter project:
+## Running the Example
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+From the `example` folder:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+flutter run
+```
+
+Or run via FVM:
+
+```bash
+fvm flutter run
+```

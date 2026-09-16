@@ -22,15 +22,60 @@ class EdgeGuardConfig {
   final bool debugOnlyInspector;
 
   const EdgeGuardConfig({
-    this.enableDiagnostics = true,
-    this.enableInspector = true,
+    this.enableDiagnostics = false,
+    this.enableInspector = false,
     this.enableDebugOverlay = false,
     this.protectBottomActions = true,
     this.protectBottomSheets = true,
-    this.showWarnings = true,
-    this.debugOnlyInspector = true,
+    this.showWarnings = false,
+    this.debugOnlyInspector = false,
   });
 
   /// The default configuration.
   static const EdgeGuardConfig standard = EdgeGuardConfig();
+
+  /// Creates a copy of this config with the given fields replaced.
+  EdgeGuardConfig copyWith({
+    bool? enableDiagnostics,
+    bool? enableInspector,
+    bool? enableDebugOverlay,
+    bool? protectBottomActions,
+    bool? protectBottomSheets,
+    bool? showWarnings,
+    bool? debugOnlyInspector,
+  }) {
+    return EdgeGuardConfig(
+      enableDiagnostics: enableDiagnostics ?? this.enableDiagnostics,
+      enableInspector: enableInspector ?? this.enableInspector,
+      enableDebugOverlay: enableDebugOverlay ?? this.enableDebugOverlay,
+      protectBottomActions: protectBottomActions ?? this.protectBottomActions,
+      protectBottomSheets: protectBottomSheets ?? this.protectBottomSheets,
+      showWarnings: showWarnings ?? this.showWarnings,
+      debugOnlyInspector: debugOnlyInspector ?? this.debugOnlyInspector,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is EdgeGuardConfig &&
+        other.enableDiagnostics == enableDiagnostics &&
+        other.enableInspector == enableInspector &&
+        other.enableDebugOverlay == enableDebugOverlay &&
+        other.protectBottomActions == protectBottomActions &&
+        other.protectBottomSheets == protectBottomSheets &&
+        other.showWarnings == showWarnings &&
+        other.debugOnlyInspector == debugOnlyInspector;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        enableDiagnostics,
+        enableInspector,
+        enableDebugOverlay,
+        protectBottomActions,
+        protectBottomSheets,
+        showWarnings,
+        debugOnlyInspector,
+      );
 }

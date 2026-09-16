@@ -1,8 +1,15 @@
 import 'edge_guard_navigation_mode.dart';
 
 /// Information about the current platform and its edge-to-edge capabilities.
+///
+/// All fields are derived from Flutter's stable public APIs (`kIsWeb`,
+/// `defaultTargetPlatform`, and `MediaQuery` insets/size).
+///
+/// **No `dart:io` dependency** — this model works on every Flutter target:
+/// Android, iOS, Web, macOS, Windows, Linux, and Fuchsia.
 class EdgeGuardPlatformInfo {
-  /// The operating system (e.g., android, ios).
+  /// The operating system name (e.g., 'android', 'ios', 'web', 'windows',
+  /// 'linux', 'macos').
   final String platform;
 
   /// True if running on Android.
@@ -11,11 +18,20 @@ class EdgeGuardPlatformInfo {
   /// True if running on iOS.
   final bool isIOS;
 
-  /// True if running on the Web.
+  /// True if running in a web browser (via `kIsWeb`).
   final bool isWeb;
 
-  /// True if running on a desktop platform (macOS, Windows, Linux).
+  /// True if running on a desktop OS (macOS, Windows, or Linux).
   final bool isDesktop;
+
+  /// True if running on macOS (desktop).
+  final bool isMacOS;
+
+  /// True if running on Windows (desktop).
+  final bool isWindows;
+
+  /// True if running on Linux (desktop).
+  final bool isLinux;
 
   /// The Android SDK version, if available and reliably determined at runtime.
   /// Otherwise, null.
@@ -32,7 +48,7 @@ class EdgeGuardPlatformInfo {
   /// The heuristic navigation mode in use.
   final EdgeGuardNavigationMode navigationMode;
 
-  /// Whether the window size indicates a large screen (e.g., tablet).
+  /// Whether the window size indicates a large screen (e.g., tablet, desktop).
   final bool isLargeScreen;
 
   /// Whether the display appears to be foldable or has a hinge.
@@ -47,6 +63,9 @@ class EdgeGuardPlatformInfo {
     required this.isIOS,
     required this.isWeb,
     required this.isDesktop,
+    this.isMacOS = false,
+    this.isWindows = false,
+    this.isLinux = false,
     this.androidSdkInt,
     this.targetSdk,
     this.compileSdk,
@@ -63,6 +82,9 @@ class EdgeGuardPlatformInfo {
       'isIOS': isIOS,
       'isWeb': isWeb,
       'isDesktop': isDesktop,
+      'isMacOS': isMacOS,
+      'isWindows': isWindows,
+      'isLinux': isLinux,
       'androidSdkInt': androidSdkInt ?? 'unavailable',
       'targetSdk': targetSdk ?? 'unavailable',
       'compileSdk': compileSdk ?? 'unavailable',
