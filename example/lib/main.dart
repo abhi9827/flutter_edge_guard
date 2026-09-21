@@ -407,82 +407,85 @@ class ExemptDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // No SafeArea — intentionally full-bleed.
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        // Gradient that deliberately fills behind status + nav bars.
-        Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xFF1A237E), Color(0xFF880E4F)],
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Gradient that deliberately fills behind status + nav bars.
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0xFF1A237E), Color(0xFF880E4F)],
+              ),
             ),
           ),
-        ),
-        // Content — positioned manually using viewPadding for illustrative purposes.
-        Positioned(
-          top: MediaQuery.viewPaddingOf(context).top + 16,
-          left: 16,
-          right: 16,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'EdgeGuardExempt Demo',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+          // Content — positioned manually using viewPadding for illustrative purposes.
+          Positioned(
+            top: MediaQuery.viewPaddingOf(context).top + 16,
+            left: 16,
+            right: 16,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () => Navigator.of(context).pop(),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              const Text(
-                'This screen is wrapped in EdgeGuardExempt.\n\n'
-                'The global auto-fix bottom padding does NOT apply here — '
-                'the gradient intentionally draws behind both the status '
-                'bar (top) and the navigation/gesture bar (bottom).\n\n'
-                'This is ideal for:\n'
-                '  • Full-bleed photo/video viewers\n'
-                '  • Splash screens\n'
-                '  • Map screens\n'
-                '  • Custom navigation shells\n\n'
-                'For all other routes in your app, EdgeGuardApp applies '
-                'bottom padding automatically — zero code changes needed.',
-                style:
-                    TextStyle(color: Colors.white70, fontSize: 14, height: 1.5),
-              ),
-            ],
+                    const SizedBox(width: 8),
+                    const Text(
+                      'EdgeGuardExempt Demo',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  'This screen is wrapped in EdgeGuardExempt.\n\n'
+                  'The global auto-fix bottom padding does NOT apply here — '
+                  'the gradient intentionally draws behind both the status '
+                  'bar (top) and the navigation/gesture bar (bottom).\n\n'
+                  'This is ideal for:\n'
+                  '  • Full-bleed photo/video viewers\n'
+                  '  • Splash screens\n'
+                  '  • Map screens\n'
+                  '  • Custom navigation shells\n\n'
+                  'For all other routes in your app, EdgeGuardApp applies '
+                  'bottom padding automatically — zero code changes needed.',
+                  style:
+                      TextStyle(color: Colors.white70, fontSize: 14, height: 1.5),
+                ),
+              ],
+            ),
           ),
-        ),
-        // Visual indicator at the bottom showing the unpadded zone.
-        Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: MediaQuery.viewPaddingOf(context).bottom + 4,
-          child: Container(
-            color: Colors.white.withValues(alpha: 0.15),
-            alignment: Alignment.center,
-            child: Text(
-              '← nav bar zone (no padding applied) →',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.8),
-                fontSize: 10,
+          // Visual indicator at the bottom showing the unpadded zone.
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: MediaQuery.viewPaddingOf(context).bottom + 4,
+            child: Container(
+              color: Colors.white.withValues(alpha: 0.15),
+              alignment: Alignment.center,
+              child: Text(
+                '← nav bar zone (no padding applied) →',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.8),
+                  fontSize: 10,
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- **Fix**: Removed yellow fallback text styling from `EdgeGuardExempt` example screen by injecting a transparent `Scaffold` ancestor.
+
 ## 0.2.0
 
 - Initial stable release of `flutter_edge_guard`.
