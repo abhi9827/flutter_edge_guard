@@ -1,5 +1,3 @@
-import 'package:flutter/widgets.dart';
-
 import '../../models/edge_guard_confidence.dart';
 import '../../models/edge_guard_issue.dart';
 import '../../models/edge_guard_issue_type.dart';

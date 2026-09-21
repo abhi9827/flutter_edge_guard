@@ -110,7 +110,6 @@ class EdgeGuard extends StatelessWidget {
     final isEdgeToEdge =
         padding.top > 0 && (effectiveBottom > 0 || gestureNavBottom > 0);
 
-
     final insetsInfo = EdgeInsetsInfo(
       statusBars: statusBars,
       navigationBars: navigationBars,

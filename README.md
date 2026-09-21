@@ -5,29 +5,34 @@
 [![Flutter](https://img.shields.io/badge/Flutter-3.24+-02569B?logo=flutter)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.5+-0175C2?logo=dart)](https://dart.dev)
 
-Understand and fix modern Android edge-to-edge UI problems. An edge-to-edge protection layer, diagnostics engine, and developer project doctor for Flutter.
+**Make your entire Flutter app Android 15 Edge-to-Edge compliant with a single line of code.**
 
-Answers a single, vital question for developers:
-**"Why is my Flutter UI broken near the edge?"**
+`flutter_edge_guard` is a drop-in protection layer and diagnostics engine that automatically handles system bar and gesture inset overlaps for your app, meaning you **don't have to manually add `SafeArea` to dozens of existing screen classes.**
+
+---
+
+## What is Edge-to-Edge? (And why you need this)
+
+Starting with **Android 15 (API 35)**, Google enforces "edge-to-edge" window behavior by default:
+* The status bar (top) and navigation/gesture bar (bottom) are transparent.
+* Your app's background draws *behind* these system bars to look modern and immersive.
+
+**The Problem:** If you built your app before Android 15, your bottom buttons, Floating Action Buttons (FABs), or last list items will now be trapped underneath the Android gesture bar. They become untappable or visually broken.
+
+**The Old Fix:** Go through all 70-80 of your `Scaffold` screen classes and manually wrap their bodies in `SafeArea`. (Tedious, and often causes "double-padding" bugs where things get pushed too far up).
+
+**The Edge Guard Fix:** Wrap your root widget in `EdgeGuardApp`. It automatically calculates and applies the exact required padding to the bottom of all your screens globally. Your UI is fixed instantly, and your backgrounds still draw beautifully behind the system bars.
 
 ---
 
 ## Table of Contents
 
-- [Why Android 15 & 16 Matter](#why-android-15--16-matter)
 - [Key Features](#key-features)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Configuration Reference](#configuration-reference)
 - [Widgets in Detail](#widgets-in-detail)
-  - [EdgeGuard (Root Provider)](#1-edgeguard-root-provider)
-  - [EdgeGuardBottomAction](#2-edgeguardbottomaction)
-  - [EdgeGuardAnimatedAction](#3-edgeguardanimatedaction)
-  - [EdgeGuardBottomSheet](#4-edgeguardbottomsheet)
-  - [EdgeGuardScrim](#5-edgeguardscrim)
-  - [EdgeGuardInspector](#6-edgeguardinspector)
-  - [EdgeGuardZoneOverlay](#7-edgeguardzoneoverlay)
 - [Diagnostics Engine](#diagnostics-engine)
 - [Project Doctor CLI](#project-doctor-cli)
 - [Limitations](#limitations)
@@ -35,22 +40,10 @@ Answers a single, vital question for developers:
 
 ---
 
-## Why Android 15 & 16 Matter
-
-Starting with **Android 15 (API 35)**, Google enforces edge-to-edge window behavior for applications targeting the new SDK:
-* Status and navigation bars become transparent by default.
-* Your application content draws *behind* these system bars.
-* Old assumptions about automatic window offsets break.
-
-In **Android 16 (API 36)**, edge-to-edge opt-outs are further restricted, and predictive back gestures become a stronger platform default.
-
-> **Note**: `EdgeGuard` does not disable edge-to-edge; it helps you build correctly for it without introducing double-padding or broken gesture interactions.
-
----
-
 ## Key Features
 
-- 🛡️ **Intelligent Protection**: Automatically prevents bottom actions and bottom sheets from overlapping navigation bars or the keyboard without causing duplicate `SafeArea` padding.
+- 🪄 **Zero-Edit Global Auto-Fix**: Make your whole app edge-to-edge safe just by replacing `MaterialApp` with `EdgeGuardApp`. No need to edit your 80+ existing screen files.
+- 🛡️ **Intelligent Double-Pad Prevention**: Automatically zeroes out `MediaQuery` insets after applying them, so if you *did* use `SafeArea` somewhere, it won't push your UI up twice.
 - ⚡ **Animated Keyboard Handling**: Smoothly animates bottom-docked actions when the on-screen keyboard (IME) appears or dismisses.
 - 🎨 **System Bar Scrims**: Dynamic gradient overlays for status and navigation bars ensuring icon and text contrast against arbitrary content.
 - 🔍 **Real-Time Diagnostics Engine**: Inspects system gestures, navigation modes (3-button, 2-button, gesture), display cutouts, foldables, iOS notches, and Dynamic Island.
@@ -85,18 +78,16 @@ flutter pub add flutter_edge_guard
 
 ## Quick Start
 
-Wrap your root widget with `EdgeGuard`:
+### 1. Global Auto-Fix (Recommended)
+
+Wrap your root widget with `EdgeGuardApp` (a drop-in replacement for `MaterialApp`). This applies bottom-edge navigation bar protection to all 80+ screens in your app with a single line of code, while preventing double-padding issues.
 
 ```dart
 import 'package:flutter/material.dart';
 import 'package:flutter_edge_guard/flutter_edge_guard.dart';
 
 void main() {
-  runApp(
-    const EdgeGuard(
-      child: MyApp(),
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -104,12 +95,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'EdgeGuard Demo',
+    // 1-line change: replace MaterialApp with EdgeGuardApp
+    return EdgeGuardApp(
+      title: 'My App',
       home: const HomeScreen(),
     );
   }
 }
+```
+
+### 2. Full-Bleed Exemptions
+
+If you have a full-bleed screen (like a splash screen, map, or immersive photo viewer) that *should* draw behind the navigation bar without any padding, simply wrap it in `EdgeGuardExempt`:
+
+```dart
+// In your routes map or navigation logic:
+'/splash': (context) => const EdgeGuardExempt(child: SplashScreen()),
 ```
 
 ---

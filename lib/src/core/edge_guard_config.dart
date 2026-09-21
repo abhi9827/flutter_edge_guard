@@ -1,3 +1,5 @@
+import '../auto_fix/edge_guard_auto_fix_config.dart';
+
 /// Configuration options for the EdgeGuard system.
 class EdgeGuardConfig {
   /// Whether diagnostics are enabled.
@@ -21,6 +23,12 @@ class EdgeGuardConfig {
   /// Whether the inspector is strictly limited to debug mode.
   final bool debugOnlyInspector;
 
+  /// Configuration for the auto-fix inset-protection layer.
+  ///
+  /// Defaults to [EdgeGuardAutoFixConfig.standard], which protects the bottom
+  /// edge (navigation / gesture bar) and sides, leaving the top to [Scaffold].
+  final EdgeGuardAutoFixConfig autoFix;
+
   const EdgeGuardConfig({
     this.enableDiagnostics = false,
     this.enableInspector = false,
@@ -29,6 +37,7 @@ class EdgeGuardConfig {
     this.protectBottomSheets = true,
     this.showWarnings = false,
     this.debugOnlyInspector = false,
+    this.autoFix = EdgeGuardAutoFixConfig.standard,
   });
 
   /// The default configuration.
@@ -43,6 +52,7 @@ class EdgeGuardConfig {
     bool? protectBottomSheets,
     bool? showWarnings,
     bool? debugOnlyInspector,
+    EdgeGuardAutoFixConfig? autoFix,
   }) {
     return EdgeGuardConfig(
       enableDiagnostics: enableDiagnostics ?? this.enableDiagnostics,
@@ -52,6 +62,7 @@ class EdgeGuardConfig {
       protectBottomSheets: protectBottomSheets ?? this.protectBottomSheets,
       showWarnings: showWarnings ?? this.showWarnings,
       debugOnlyInspector: debugOnlyInspector ?? this.debugOnlyInspector,
+      autoFix: autoFix ?? this.autoFix,
     );
   }
 
@@ -65,7 +76,8 @@ class EdgeGuardConfig {
         other.protectBottomActions == protectBottomActions &&
         other.protectBottomSheets == protectBottomSheets &&
         other.showWarnings == showWarnings &&
-        other.debugOnlyInspector == debugOnlyInspector;
+        other.debugOnlyInspector == debugOnlyInspector &&
+        other.autoFix == autoFix;
   }
 
   @override
@@ -77,5 +89,6 @@ class EdgeGuardConfig {
         protectBottomSheets,
         showWarnings,
         debugOnlyInspector,
+        autoFix,
       );
 }

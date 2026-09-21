@@ -3,6 +3,9 @@
 ## 0.1.0
 
 - Initial stable release of `flutter_edge_guard`.
+- **Auto-Fix Layer**:
+  - `EdgeGuardApp`: A `MaterialApp` drop-in replacement that applies global edge-to-edge protection without requiring edits to existing screens.
+  - `EdgeGuardExempt`: A wrapper to opt individual screens out of global padding (e.g., for full-bleed splash screens or photo viewers).
 - **Core Provider**:
   - `EdgeGuard`: Granular `MediaQuery` extraction and scoped inset propagation.
   - `EdgeGuardConfig`: Customizable runtime configuration flags.

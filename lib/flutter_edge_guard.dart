@@ -1,5 +1,11 @@
 library;
 
+// Auto-Fix
+export 'src/auto_fix/edge_guard_app.dart';
+export 'src/auto_fix/edge_guard_auto_fix_config.dart';
+export 'src/auto_fix/edge_guard_exempt.dart';
+export 'src/auto_fix/edge_guard_inset_applier.dart';
+
 // Core
 export 'src/core/edge_guard.dart';
 export 'src/core/edge_guard_config.dart';

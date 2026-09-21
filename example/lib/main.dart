@@ -2,15 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_edge_guard/flutter_edge_guard.dart';
 
 void main() {
-  runApp(
-    EdgeGuard(
-      config: const EdgeGuardConfig(
-        enableDebugOverlay: false,
-        enableInspector: false,
-      ),
-      child: const EdgeGuardInspector(child: MyApp()),
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -18,8 +10,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    // ✅ One-line migration: replace MaterialApp with EdgeGuardApp.
+    // Every screen in the app is now automatically protected from
+    // navigation-bar and gesture-inset overlap — zero edits to screens.
+    return EdgeGuardApp(
       title: 'Edge Guard Demo',
+      // Diagnostics config (optional — enable during development):
+      config: const EdgeGuardConfig(
+        enableDebugOverlay: false,
+        enableInspector: false,
+      ),
+      // Auto-fix config (defaults protect bottom + sides; top is left to Scaffold):
+      autoFixConfig: EdgeGuardAutoFixConfig.standard,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
@@ -95,6 +97,23 @@ class DemoHome extends StatelessWidget {
             subtitle: 'View the full machine-readable report',
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const DiagnosticsDemo()),
+            ),
+          ),
+          const Divider(height: 32),
+          const Padding(
+            padding: EdgeInsets.only(bottom: 8),
+            child: Text(
+              'Auto-Fix Layer',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+            ),
+          ),
+          _DemoButton(
+            label: 'Full-Bleed Exempt Demo',
+            subtitle: 'EdgeGuardExempt — opt a screen out of global padding',
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => EdgeGuardExempt(child: const ExemptDemo()),
+              ),
             ),
           ),
         ],
@@ -370,6 +389,100 @@ class DiagnosticsDemo extends StatelessWidget {
                 ],
               ),
             ),
+    );
+  }
+}
+
+// ─── Exempt Demo ─────────────────────────────────────────────────────────────
+
+/// Demonstrates [EdgeGuardExempt]: a full-bleed screen that intentionally
+/// draws behind both status bar and nav bar without any auto-fix padding.
+///
+/// In the route registration (DemoHome above), this screen is wrapped:
+///   EdgeGuardExempt(child: ExemptDemo())
+/// That single wrap bypasses the global [EdgeGuardInsetApplier] for this route.
+class ExemptDemo extends StatelessWidget {
+  const ExemptDemo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // No SafeArea — intentionally full-bleed.
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // Gradient that deliberately fills behind status + nav bars.
+        Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFF1A237E), Color(0xFF880E4F)],
+            ),
+          ),
+        ),
+        // Content — positioned manually using viewPadding for illustrative purposes.
+        Positioned(
+          top: MediaQuery.viewPaddingOf(context).top + 16,
+          left: 16,
+          right: 16,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'EdgeGuardExempt Demo',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'This screen is wrapped in EdgeGuardExempt.\n\n'
+                'The global auto-fix bottom padding does NOT apply here — '
+                'the gradient intentionally draws behind both the status '
+                'bar (top) and the navigation/gesture bar (bottom).\n\n'
+                'This is ideal for:\n'
+                '  • Full-bleed photo/video viewers\n'
+                '  • Splash screens\n'
+                '  • Map screens\n'
+                '  • Custom navigation shells\n\n'
+                'For all other routes in your app, EdgeGuardApp applies '
+                'bottom padding automatically — zero code changes needed.',
+                style:
+                    TextStyle(color: Colors.white70, fontSize: 14, height: 1.5),
+              ),
+            ],
+          ),
+        ),
+        // Visual indicator at the bottom showing the unpadded zone.
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: MediaQuery.viewPaddingOf(context).bottom + 4,
+          child: Container(
+            color: Colors.white.withValues(alpha: 0.15),
+            alignment: Alignment.center,
+            child: Text(
+              '← nav bar zone (no padding applied) →',
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.8),
+                fontSize: 10,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

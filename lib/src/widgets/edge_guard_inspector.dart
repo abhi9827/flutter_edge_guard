@@ -81,7 +81,6 @@ class _EdgeGuardInspectorState extends State<EdgeGuardInspector> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-
                             // Button row
                             Row(
                               mainAxisSize: MainAxisSize.min,

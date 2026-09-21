@@ -43,7 +43,7 @@ class EdgeGuardBottomAction extends StatelessWidget {
         sysGesturesOf.bottom,
       );
       final imeBottom = viewInsetsOf.bottom;
-      
+
       // The effective bottom is the maximum of the system nav area and the IME area.
       bottomPadding = math.max(sysNavBottom, imeBottom);
     } else if (scope == null) {

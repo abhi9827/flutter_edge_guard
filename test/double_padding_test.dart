@@ -3,7 +3,8 @@ import 'package:flutter_edge_guard/flutter_edge_guard.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Double padding test for EdgeGuardBottomAction inside Scaffold', (tester) async {
+  testWidgets('Double padding test for EdgeGuardBottomAction inside Scaffold',
+      (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: MediaQuery(
@@ -31,8 +32,7 @@ void main() {
         ),
       ),
     );
-    
-    final rect = tester.getRect(find.byType(SizedBox));
-    print('SizedBox rect: $rect');
+
+    tester.getRect(find.byType(SizedBox));
   });
 }
