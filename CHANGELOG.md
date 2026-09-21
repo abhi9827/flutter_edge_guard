@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0
+## 0.2.0
 
 - Initial stable release of `flutter_edge_guard`.
 - **Auto-Fix Layer**:

@@ -1,6 +1,6 @@
 name: flutter_edge_guard
 description: Understand and fix modern Android edge-to-edge UI problems. An edge-to-edge protection layer and diagnostics engine for Flutter.
-version: 0.1.0
+version: 0.2.0
 homepage: https://github.com/abhi9827/flutter_edge_guard
 repository: https://github.com/abhi9827/flutter_edge_guard
 issue_tracker: https://github.com/abhi9827/flutter_edge_guard/issues
